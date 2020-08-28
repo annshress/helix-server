@@ -15,15 +15,29 @@ User = get_user_model()
 
 class Figure(MetaInformationAbstractModel, UUIDAbstractModel, models.Model):
     class QUANTIFIER(enum.Enum):
-        more_than = 0
-        less_than = 1
-        exact = 2
+        approximately = 0
+        more_than = 1
+        less_than = 2
+        exact = 3
 
     class UNIT(enum.Enum):
         person = 0
+        household = 0
 
     class TERM(enum.Enum):
         evacuated = 0
+        displaced = 1
+        destroyed_housing = 2
+        partially_destroyed_housing = 3
+        uninhabitable_housing = 4
+        forced_to_flee = 5
+        homeless = 6
+        in_relief_camp = 7
+        sheltered = 8
+        relocated = 9
+        affected = 10
+        returns = 11
+        multiple_or_other = 12
 
     class TYPE(enum.Enum):
         idp_stock = 0
