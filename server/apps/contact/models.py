@@ -44,6 +44,7 @@ class Communication(MetaInformationAbstractModel, models.Model):
     class COMMUNICATION_MEDIUM(enum.Enum):
         MAIL = 0
         PHONE = 1
+        SKYPE = 2
 
     contact = models.ForeignKey('Contact', verbose_name=_('Contact'),
                                 related_name='communications', on_delete=models.CASCADE)
@@ -55,7 +56,8 @@ class Communication(MetaInformationAbstractModel, models.Model):
                                      null=True, blank=True,
                                      help_text=_('Date on which communication occurred.'))
     medium = enum.EnumField(COMMUNICATION_MEDIUM)
-    # todo attachment
+    attachment = models.FileField(verbose_name=_('attachment'), upload_to='communication/attachments',
+                                  blank=True, null=True)
 
     def __str__(self):
         return f'{self.contact} {self.date_time}'
