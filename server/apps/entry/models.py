@@ -22,7 +22,7 @@ class Figure(MetaInformationAbstractModel, UUIDAbstractModel, models.Model):
 
     class UNIT(enum.Enum):
         person = 0
-        household = 0
+        household = 1
 
     class TERM(enum.Enum):
         evacuated = 0
@@ -52,6 +52,10 @@ class Figure(MetaInformationAbstractModel, UUIDAbstractModel, models.Model):
     quantifier = enum.EnumField(enum=QUANTIFIER, verbose_name=_('Quantifier'))
     reported = models.PositiveIntegerField(verbose_name=_('Reported Figures'))
     unit = enum.EnumField(enum=UNIT, verbose_name=_('Unit of Figure'), default=UNIT.person)
+    household_size = models.PositiveSmallIntegerField(verbose_name=_('Household Size'),
+                                                      default=1)
+    total_figures = models.PositiveIntegerField(verbose_name=_('Total Figures'), default=0,
+                                                editable=False)
     term = enum.EnumField(enum=TERM, verbose_name=_('Term'), default=TERM.evacuated)
     type = enum.EnumField(enum=TYPE, verbose_name=_('Figure Type'), default=TYPE.idp_stock)
     role = enum.EnumField(enum=ROLE, verbose_name=_('Role'), default=ROLE.recommended)
@@ -116,6 +120,12 @@ class Figure(MetaInformationAbstractModel, UUIDAbstractModel, models.Model):
         errors.update(self.clean_idu())
         if errors:
             raise ValidationError(errors)
+
+    def save(self, *args, **kwargs):
+        self.total_figures = self.reported
+        if self.unit == self.UNIT.household:
+            self.total_figures = self.reported * self.household_size
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.quantifier.label} {self.reported} {self.term.label}'
