@@ -30,7 +30,7 @@ def serializer_error_to_error_types(errors: dict, initial_data: dict = None) -> 
             if isinstance(value[0], str):
                 error_types.append(CustomErrorType(
                     field=_camelize_django_str(field),
-                    messages=''.join(str(msg) for msg in value)
+                    messages=' '.join(str(msg) for msg in value)
                 ))
             elif isinstance(value[0], dict):
                 array_errors = []
@@ -52,7 +52,7 @@ def serializer_error_to_error_types(errors: dict, initial_data: dict = None) -> 
             # fallback
             error_types.append(CustomErrorType(
                 field=_camelize_django_str(field),
-                messages=''.join(str(msg) for msg in value)
+                messages=' '.join(str(msg) for msg in value)
             ))
     return error_types
 

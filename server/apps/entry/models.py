@@ -4,7 +4,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField, JSONField
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.translation import gettext_lazy as _
+from django.db.models import Sum
+from django.utils.translation import gettext_lazy as _, gettext
 from django_enumfield import enum
 
 from apps.contrib.models import MetaInformationAbstractModel, UUIDAbstractModel
@@ -157,14 +158,18 @@ class Entry(MetaInformationAbstractModel, models.Model):
                                        blank=True,
                                        related_name='review_entries')
 
+    @property
+    def total_figures(self):
+        return self.figures.aggregate(total=Sum('total_figures'))['total']
+
     @staticmethod
     def clean_url_and_document(values: dict, instance=None) -> OrderedDict:
         errors = OrderedDict()
         url = values.get('url', getattr(instance, 'url', None))
         document = values.get('document', getattr(instance, 'document', None))
         if not url and not document:
-            errors['url'] = _('Please fill the URL or upload a document. ')
-            errors['document'] = _('Please fill the URL or upload a document. ')
+            errors['url'] = gettext('Please fill the URL or upload a document.')
+            errors['document'] = gettext('Please fill the URL or upload a document.')
         return errors
 
     def can_be_updated_by(self, user: User) -> bool:
